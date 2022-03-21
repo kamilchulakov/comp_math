@@ -25,7 +25,7 @@ def accuracy():
 
 
 def solve_one_preset():
-    print("Доступные функции:\n")
+    print("Доступные функции сегодня:\n")
     print("1 - ", functions.get_function_str(1))
     print("2 - ", functions.get_function_str(2))
     print("3 - ", functions.get_function_str(3))
@@ -50,8 +50,8 @@ def solve_one_preset():
         case 1:
             ans, iterations = calculations.half_div_method(lmd, a, b, acc)
         case 2:
-            ans, iterations = calculations.iterrations_method(lmd, a, b, acc)
-    print("Корень: ", ans)
+            ans, iterations = calculations.iterations_method(lmd, a, b, acc)
+    print("Корень: ", util.pretty_round(ans))
     print("\nИтераций: ", iterations)
     draws.plot_function(lmd,  a - 0.5, b + 0.5, lmd(a) - 0.5, lmd(b) + 0.5, 0.2)
 
@@ -97,7 +97,7 @@ def solve_system():
 
 def greet():
     slow = 1
-    fast = 0.1
+    fast = 0.01
     mid = 0.2
     report = "> Good morning!\nIt's March 20 2022 and it's sunday.\nHere in LA: a clear morning, quite a strong breeze " \
              "blowing right now.\n55 degrees fahrenheit, around 13 celcius.\nDay 2 of weekend projects. Day 2 of riding " \
@@ -105,7 +105,7 @@ def greet():
              "cup of coffee and a cookie. And I noticed in the observation car:\nI looked" \
              " at the clock and it said time for peace.\nThis afternoon it'll be going " \
              "up to 75 degrees fahrenheit around 24 celsius\nand it looks like we're going to be enjoying once again wall-to-wall\n" \
-             "beautiful blue skies and golden sunshine all along the way.\nEveryone, have a great day!\n\n\- Weather report by David Lynch\n"
+             "beautiful blue skies and golden sunshine all along the way.\nEveryone, have a great day!\n\n\- Weather report by David\n"
     for chr in report:
         print(chr, end="")
         if chr == '\n':
@@ -114,15 +114,18 @@ def greet():
 
 
 def main_choice():
-    choice = int(input("Введите 1, если хотите решить нелинейное уравнение.\nВведите 2, если хотите решить систему "
-                       "нелинейных уравнений.\n"))
-    match choice:
-        case 1:
-            solve_one_choice()
-        case 2:
-            solve_system()
-        case _:
-            error()
+    try:
+        choice = int(input("Введите 1, если хотите решить нелинейное уравнение.\nВведите 2, если хотите решить систему "
+                           "нелинейных уравнений.\n"))
+        match choice:
+            case 1:
+                solve_one_choice()
+            case 2:
+                solve_system()
+            case _:
+                error()
+    except Exception:
+        error()
 
 
 if __name__ == "__main__":

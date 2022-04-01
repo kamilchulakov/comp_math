@@ -75,6 +75,15 @@ fun main(args: Array<String>) {
         }
         it
     }
+    val peekEps = ProceedProgram {
+        log.accept("Peeking eps.")
+        println("Peek a number from 0.0 to 1.0")
+        it.eps = readln().toDouble()
+        if ((it.eps > 1.0) or (it.eps < 0.0)) {
+            error("Bad method number.")
+        }
+        it
+    }
     val solve = ProceedProgram {
         log.accept("Solving.")
         when(it.method) {
@@ -92,5 +101,5 @@ fun main(args: Array<String>) {
         println("Result ${it.result}")
         it
     }
-    finish(solve(peekMethod(peekInitialPartition(peekRestrictions(peekFunction(start(ProgramState)))))))
+    finish(solve(peekEps(peekMethod(peekInitialPartition(peekRestrictions(peekFunction(start(ProgramState))))))))
 }

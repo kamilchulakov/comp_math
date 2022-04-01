@@ -2,7 +2,6 @@ import java.util.function.Consumer
 import kotlin.math.pow
 
 fun progressBar() {
-    return
     var i = 0
     while (i < 21) {
         print("[")
@@ -78,8 +77,11 @@ fun main(args: Array<String>) {
     }
     val solve = ProceedProgram {
         log.accept("Solving.")
-        //solveRectangleLeft(it)
-        solveSimpson(it)
+        when(it.method) {
+            1->solveRectangleLeft(it)
+            4->solveSimpson(it)
+            else->error("Not implemented yet")
+        }
         progressBar()
         it.solved = true
         it

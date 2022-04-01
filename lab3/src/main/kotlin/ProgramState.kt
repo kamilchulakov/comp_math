@@ -9,6 +9,7 @@ object ProgramState {
     var method by Delegates.notNull<Int>()
     var solved = false
     var result = 0.0
+    var eps = 0.01
 
 
     class DefaultPartition {

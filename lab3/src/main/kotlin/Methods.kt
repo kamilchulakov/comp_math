@@ -19,9 +19,10 @@ fun solveRectangleLeft(programState: ProgramState) {
         x = programState.a
         y = programState.function(x)
         sm = y
-        for (i in 1..N) {
+        for (i in 1 until N) {
             x += h
-            sm += programState.function(x)
+            y = programState.function(x)
+            sm += y
         }
         N *= 2
         sm *= h

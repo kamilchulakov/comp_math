@@ -88,6 +88,8 @@ fun main(args: Array<String>) {
         log.accept("Solving.")
         when(it.method) {
             1->solveRectangleLeft(it)
+            2->solveRectangleMid(it)
+            3->solveRectangleRight(it)
             4->solveSimpson(it)
             else->error("Not implemented yet")
         }
@@ -95,11 +97,11 @@ fun main(args: Array<String>) {
         it.solved = true
         it
     }
-    val finish = ProceedProgram {
+    val finish: (ProgramState)->Unit =  {
         if (!it.solved) error("No solution found...")
         log.accept("Solved.")
-        println("Result ${it.result}")
-        it
+        println("Result: ${it.result}")
+        println("Operations: ${it.operations}")
     }
     finish(solve(peekEps(peekMethod(peekInitialPartition(peekRestrictions(peekFunction(start(ProgramState))))))))
 }

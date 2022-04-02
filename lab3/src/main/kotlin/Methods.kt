@@ -1,26 +1,72 @@
 import java.lang.Double.sum
 import kotlin.math.pow
 
+enum class Method {
+        LEFT, RIGHT, MID
+}
+
 /**
  * WARNING: doesn't work for integral < 0
  */
-fun solveRectangleLeft(programState: ProgramState) {
+private fun solveRectangle(programState: ProgramState, method: Method) {
     val h = programState.h
     val k = 2
-    var x = programState.a
-    var y = programState.function(x)
-    var sm = y
+    var sm = 0.0
     var N = programState.n.toInt()
     var prev = -1.0
     while (((prev - sm) / (2.0.pow(k) - 1) > programState.eps) or (prev < 0.0)) {
+        programState.operations = N
         prev = sm
-        x = programState.a
-        y = programState.function(x)
+        var x = programState.a
+        var y = programState.function(x)
         sm = 0.0
         for (i in 1 .. N) {
             x += h
-            sm += y
-            y = programState.function(x)
+            when (method) {
+                Method.LEFT -> {
+                    sm += y
+                    y = programState.function(x)
+                }
+                Method.RIGHT -> {
+                    y = programState.function(x)
+                    sm += y
+                }
+                else -> {
+                    error("Not supported method!")
+                }
+            }
+        }
+        N *= 2
+        sm *= h
+    }
+
+    programState.result = sm
+}
+
+fun solveRectangleLeft(programState: ProgramState) {
+    solveRectangle(programState, Method.LEFT)
+}
+
+fun solveRectangleRight(programState: ProgramState) {
+    solveRectangle(programState, Method.RIGHT)
+}
+
+fun solveRectangleMid(programState: ProgramState) {
+    val h = programState.h
+    val k = 2
+    var sm = 0.0
+    var N = programState.n.toInt()
+    var prev = -1.0
+    while (((prev - sm) / (2.0.pow(k) - 1) > programState.eps) or (prev < 0.0)) {
+        programState.operations = N
+        prev = sm
+        var x = programState.a
+        sm = 0.0
+        for (i in 1 .. N) {
+            val oldX = x
+            x += h
+            val midX = (oldX + x) / 2.0
+            sm += programState.function(midX)
         }
         N *= 2
         sm *= h
@@ -41,6 +87,7 @@ fun solveSimpson(programState: ProgramState) {
     var N = programState.n.toInt()
     var prev = -1.0
     while (((prev - sm) / (2.0.pow(k) - 1) > programState.eps) or (prev < 0.0)) {
+        programState.operations = N
         prev = sm
         val mul2 = ArrayList<Double>()
         val mul4 = ArrayList<Double>()

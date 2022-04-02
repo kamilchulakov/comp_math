@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
         log.accept("Peeking function.")
         println("1: x^2")
         println("2: x^3+x^2+5")
-        println("3: 3x^3-2x^2-7x-8")
+        println("3: 3x^3-4x^2+5x-16")
         println("Peek a number from 1 to 3")
         when (readln().toInt()) {
             1 -> it.function = {
@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
                     x: Double -> x.pow(3.0) + x.pow(2.0) + 5.0
             }
             3 -> it.function = {
-                    x: Double -> 3*x.pow(3.0) - 2*x.pow(2.0) - 7*x-8
+                    x: Double -> 3*x.pow(3.0) - 4*x.pow(2.0) + 5*x-16
             }
             else -> error("Bad function number")
         }

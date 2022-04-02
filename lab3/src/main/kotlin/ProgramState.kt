@@ -15,7 +15,7 @@ object ProgramState {
         get() = (b - a) / n
 
     class DefaultPartition {
-        private var partition = 4.0
+        private var partition = 6.0
         operator fun getValue(thisRef: ProgramState, property: KProperty<*>): Double {
             return partition
         }

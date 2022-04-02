@@ -67,6 +67,7 @@ fun solveRectangleMid(programState: ProgramState) {
             x += h
             val midX = (oldX + x) / 2.0
             sm += programState.function(midX)
+            // println("$x ${programState.function(x)} $midX ${programState.function(midX)}")
         }
         N *= 2
         sm *= h

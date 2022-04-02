@@ -1,13 +1,11 @@
 import java.lang.Double.sum
-import java.lang.Math.pow
-import kotlin.math.abs
 import kotlin.math.pow
 
 /**
  * WARNING: doesn't work for integral < 0
  */
 fun solveRectangleLeft(programState: ProgramState) {
-    val h = (programState.b - programState.a) / programState.n
+    val h = programState.h
     val k = 2
     var x = programState.a
     var y = programState.function(x)
@@ -18,11 +16,11 @@ fun solveRectangleLeft(programState: ProgramState) {
         prev = sm
         x = programState.a
         y = programState.function(x)
-        sm = y
-        for (i in 1 until N) {
+        sm = 0.0
+        for (i in 1 .. N) {
             x += h
-            y = programState.function(x)
             sm += y
+            y = programState.function(x)
         }
         N *= 2
         sm *= h
@@ -30,6 +28,7 @@ fun solveRectangleLeft(programState: ProgramState) {
 
     programState.result = sm
 }
+
 
 /**
  * WARNING: doesn't work for integral < 0

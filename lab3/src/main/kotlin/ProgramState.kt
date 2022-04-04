@@ -31,4 +31,3 @@ fun interface ProceedProgram {
     operator fun invoke(state: ProgramState): ProgramState
 }
 
-

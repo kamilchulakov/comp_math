@@ -16,6 +16,8 @@ private fun solveRectangle(programState: ProgramState, method: Method) {
     var prev = -1.0
     while (((prev - sm) / (2.0.pow(k) - 1) > programState.eps) or (prev < 0.0)) {
         programState.operations = N
+        programState.n = N.toDouble()
+        val h = programState.h
         prev = sm
         var x = programState.a
         var y = programState.function(x)
@@ -52,13 +54,14 @@ fun solveRectangleRight(programState: ProgramState) {
 }
 
 fun solveRectangleMid(programState: ProgramState) {
-    val h = programState.h
     val k = 2
     var sm = 0.0
     var N = programState.n.toInt()
     var prev = -1.0
     while (((prev - sm) / (2.0.pow(k) - 1) > programState.eps) or (prev < 0.0)) {
         programState.operations = N
+        programState.n = N.toDouble()
+        val h = programState.h
         prev = sm
         var x = programState.a
         sm = 0.0
@@ -81,7 +84,6 @@ fun solveRectangleMid(programState: ProgramState) {
  * WARNING: doesn't work for integral < 0
  */
 fun solveSimpson(programState: ProgramState) {
-    val h = (programState.b - programState.a) / programState.n
     val k = 4.0
     var x = programState.a
     var sm = programState.function(x)
@@ -89,6 +91,8 @@ fun solveSimpson(programState: ProgramState) {
     var prev = -1.0
     while (((prev - sm) / (2.0.pow(k) - 1) > programState.eps) or (prev < 0.0)) {
         programState.operations = N
+        programState.n = N.toDouble()
+        val h = programState.h
         prev = sm
         val mul2 = ArrayList<Double>()
         val mul4 = ArrayList<Double>()

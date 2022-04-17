@@ -9,5 +9,5 @@ object LabConfiguration {
     const val progressNum = stateNum + possibleFuncNum - 1
     const val uiMult = 100.0 / progressNum
     const val badWaiting = 50
-    const val sleepTime = 50L
+    const val sleepTime = 100L
 }

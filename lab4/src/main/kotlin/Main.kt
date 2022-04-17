@@ -1,3 +1,4 @@
+import ExecutionManager.execute
 import UIManager.progressBar
 import java.util.*
 import New
@@ -17,11 +18,11 @@ fun main(args: Array<String>) {
                 progressBar(st)
             }
             launch {
-                st.stateChannel.send(Started)
-                st.stateChannel.send(ReadingInput)
+                execute(st)
             }
         }
     } catch (ex: IllegalStateException) {
+        println()
         println(ex.message)
     }
 }

@@ -32,7 +32,6 @@ object UIManager {
                         }
                     } finally {
                         if (cnt > badWaiting) {
-                            println()
                             throw IllegalStateException("Waited $cnt times for new state.")
                         }
                     }

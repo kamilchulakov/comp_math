@@ -13,7 +13,7 @@ object UIManager {
             for (j in 0 until i) {
                 print("#")
             }
-            for (j in 0 until progressNum - i) {
+            for (j in 0 until progressNum - i - 1) {
                 print(" ")
             }
             print("] " + i * uiMult + "%")
@@ -37,6 +37,7 @@ object UIManager {
                     }
                 }
             }
+            if (i == progressNum) break
         }
         println()
     }

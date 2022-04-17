@@ -5,21 +5,22 @@ import LabConfiguration.stateNum
 import kotlinx.coroutines.channels.Channel
 import java.util.Scanner
 
-data class ProgramState(val x: List<Double> = ArrayList(), val y: List<Double> = ArrayList(),
+data class ProgramState(val x: MutableList<Double> = ArrayList(), val y: MutableList<Double> = ArrayList(),
                         var n: Int = N, val func: (Double) -> Double = FUNC,
-                        val possibleFunc: List<PossibleFunc> = ArrayList(),
+                        val possibleFunc: MutableList<PossibleFunc> = ArrayList(),
                         val scanner: Scanner, var stateType: StateType = New,
                         val stateChannel: Channel<StateType> = Channel())
 
 fun stateProgressNum(stateType: StateType): Int {
     return when (stateType) {
-        is New -> 1
-        is Started -> 2
-        is ReadingInput -> 3
-        is Calculating -> stateType.numOfFunc + 4 - 1
+        is New -> 0
+        is Started -> 1
+        is ReadingInput -> 2
+        is Calculating -> stateType.numOfFunc + 4
+        is Calculated -> 4 + possibleFuncNum
         is Blocked -> stateProgressNum(stateType.prevState)
-        is Terminated -> possibleFuncNum + 4
-        is Finished -> possibleFuncNum + stateNum
+        is Terminated -> possibleFuncNum + stateNum - 1
+        is Finished -> possibleFuncNum + stateNum - 1
         else -> {
             throw IllegalStateException("Something went wrong.")
         }
@@ -30,9 +31,8 @@ sealed class StateType
 object New: StateType()
 object Started: StateType()
 object ReadingInput: StateType()
-class Calculating(val numOfFunc: Int): StateType()
+class Calculating(val numOfFunc: Int = 0): StateType()
 class Blocked(val prevState: StateType) : StateType()
 class Terminated(val ex: Exception): StateType()
+object Calculated: StateType()
 class Finished(val resFunc: String): StateType()
-
-data class PossibleFunc(val type: String, val funcString: String, val func: (Double) -> Double, val midEq: Double)

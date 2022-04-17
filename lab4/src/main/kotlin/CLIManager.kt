@@ -5,7 +5,7 @@ import LabConfiguration.uiMult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object UIManager {
+object CLIManager {
     suspend fun progressBar(programState: ProgramState) {
         var i = stateProgressNum(programState.stateType)
         while (i <= progressNum) {

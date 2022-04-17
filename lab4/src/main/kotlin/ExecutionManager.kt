@@ -1,3 +1,4 @@
+import GUIManager.draw
 import LabConfiguration.delimiter
 import LabConfiguration.sleepTime
 import MathSolver.cubeApproximate
@@ -69,7 +70,7 @@ object ExecutionManager {
     }
 
     private suspend fun peekBestApproximateAndUpdate(st: ProgramState) {
-        updateState(st, Finished(st.possibleFunc.last().funcString))
+        updateState(st, Finished(st.possibleFunc.last().type))
     }
 
     private suspend fun executeByState(st: ProgramState) {
@@ -94,9 +95,10 @@ object ExecutionManager {
         while (!(st.stateType is Finished || st.stateType is Terminated)) {
             executeByState(st)
         }
-        println((st.stateType as Finished).resFunc)
+        println("Best approximate: "+(st.stateType as Finished).resFunc)
         st.possibleFunc.forEach {
             println("${it.funcString} ${it.midEq}")
         }
+        draw(st.possibleFunc)
     }
 }

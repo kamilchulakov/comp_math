@@ -48,7 +48,7 @@ object MathSolver {
             )
         )
         val func: (Double) -> Double = { result[0] * it + result[1] }
-        val str = "${round(result[0])}*x + ${round(result[1])} коэф. Пирсона: ${round(r)}"
+        val str = "${round(result[0])}*x + ${round(result[1])} Pirson number: ${round(r)}"
         val sigma = calcSigma(func, st)
         st.possibleFunc.add(PossibleFunc("Linear", str, func, sigma))
     }
@@ -119,6 +119,8 @@ object MathSolver {
         val sigma = calcSigma(func, st)
         st.possibleFunc.add(PossibleFunc("Cube", str, func, sigma))
     }
+
+
 }
 
 data class PossibleFunc(val type: String, val funcString: String, val func: (Double) -> Double, val midEq: Double)

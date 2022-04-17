@@ -6,8 +6,7 @@ import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
-import jetbrains.letsPlot.geom.geomDensity
-import jetbrains.letsPlot.geom.geomHistogram
+import jetbrains.letsPlot.geom.geomPoint
 import jetbrains.letsPlot.intern.Plot
 import jetbrains.letsPlot.intern.toSpec
 import jetbrains.letsPlot.letsPlot
@@ -15,29 +14,18 @@ import javax.swing.*
 import javax.swing.JFrame.EXIT_ON_CLOSE
 
 object GUIManager {
-    fun draw(func: List<PossibleFunc>) {
+    private const val n = 200
+    private const val eps = 1.0 / n
 
-        val rand = java.util.Random()
-        val n = 200
-        val data = mapOf<String, Any>(
-            "x" to List(n) { rand.nextGaussian() }
-        )
-
-        val plots = mapOf(
-            "Density" to letsPlot(data) + geomDensity(
-                color = "dark-green",
-                fill = "green",
-                alpha = .3,
-                size = 2.0
-            ) { x = "x" },
-            "Count" to letsPlot(data) + geomHistogram(
-                color = "dark-green",
-                fill = "green",
-                alpha = .3,
-                size = 2.0
-            ) { x = "x" },
-
+    fun draw(funcList: List<PossibleFunc>) {
+        val plots = HashMap<String, Plot>()
+        for (func in funcList) {
+            val data = mapOf<String, List<*>>(
+                "xvar" to List(n) { i:Int-> i*eps },
+                "yvar" to List(n) { i:Int-> func.func(i*eps) }
             )
+            plots[func.type] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
+        }
 
         val selectedPlotKey = plots.keys.first()
         val controller = Controller(

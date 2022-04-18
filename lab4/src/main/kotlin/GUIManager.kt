@@ -14,10 +14,11 @@ import javax.swing.*
 import javax.swing.JFrame.EXIT_ON_CLOSE
 
 object GUIManager {
-    private const val n = 200
-    private const val eps = 1.0 / n
+    private const val n = 2000
+    private const val eps = 10.0 / n
 
-    fun draw(funcList: List<PossibleFunc>) {
+    fun draw(st: ProgramState) {
+        val funcList: List<PossibleFunc> = st.possibleFunc
         val plots = HashMap<String, Plot>()
         for (func in funcList) {
             val data = mapOf<String, List<*>>(
@@ -26,6 +27,11 @@ object GUIManager {
             )
             plots[func.type] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
         }
+        val data = mapOf<String, List<*>>(
+            "xvar" to List(st.n) { i:Int-> st.x[i] },
+            "yvar" to List(st.n) { i:Int-> st.y[i] }
+        )
+        plots["Points"] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
 
         val selectedPlotKey = plots.keys.first()
         val controller = Controller(
@@ -34,7 +40,7 @@ object GUIManager {
             false
         )
 
-        val window = JFrame("Example App (Swing-JavaFX)")
+        val window = JFrame("Lets plot Kotlin")
         window.defaultCloseOperation = EXIT_ON_CLOSE
         window.contentPane.layout = BoxLayout(window.contentPane, BoxLayout.Y_AXIS)
 

@@ -2,10 +2,14 @@ import GUIManager.draw
 import LabConfiguration.delimiter
 import LabConfiguration.sleepTime
 import MathSolver.cubeApproximate
+import MathSolver.expApproximate
 import MathSolver.linearApproximate
+import MathSolver.lnApproximate
+import MathSolver.powApproximate
 import MathSolver.sqrtApproximate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.Collections.min
 
 object ExecutionManager {
     private suspend fun updateState(st: ProgramState, stateType: StateType) {
@@ -54,12 +58,15 @@ object ExecutionManager {
                 updateState(st, Calculating(3))
             }
             3 -> {
+                powApproximate(st)
                 updateState(st, Calculating(4))
             }
             4 -> {
+                expApproximate(st)
                 updateState(st, Calculating(5))
             }
             5 -> {
+                lnApproximate(st)
                 updateState(st, Calculated)
             }
             else -> {
@@ -70,7 +77,10 @@ object ExecutionManager {
     }
 
     private suspend fun peekBestApproximateAndUpdate(st: ProgramState) {
-        updateState(st, Finished(st.possibleFunc.last().type))
+        val mn =  min(st.possibleFunc.map { it.midEq })
+        updateState(st, Finished(st.possibleFunc.first {
+            it.midEq == mn
+        }.type))
     }
 
     private suspend fun executeByState(st: ProgramState) {
@@ -97,8 +107,8 @@ object ExecutionManager {
         }
         println("Best approximate: "+(st.stateType as Finished).resFunc)
         st.possibleFunc.forEach {
-            println("${it.funcString} ${it.midEq}")
+            println("${it.type} ${it.funcString} ${it.midEq}")
         }
-        draw(st.possibleFunc)
+        draw(st)
     }
 }

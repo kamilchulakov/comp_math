@@ -1,4 +1,7 @@
 import Utils.round
+import java.lang.Math.log
+import kotlin.math.exp
+import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -120,7 +123,93 @@ object MathSolver {
         st.possibleFunc.add(PossibleFunc("Cube", str, func, sigma))
     }
 
-
+    fun powApproximate(st: ProgramState) {
+        val points = ArrayList<Int>()
+        for (i in 0 until st.n) {
+            if (st.x[i] > 0 && st.y[i] > 0) points.add(i)
+        }
+        if (points.size < 2) {
+            throw IllegalStateException("Must have at least 2 points.")
+        }
+        var sx = 0.0
+        var sxx = 0.0
+        var sy = 0.0
+        var sxy = 0.0
+        for (i in points) {
+            sx += ln(st.x[i])
+            sxx += ln(st.x[i]).pow(2)
+            sy += ln(st.y[i])
+            sxy += ln(st.x[i]) * ln(st.y[i])
+        }
+        val result = solveSystemAndCatch(
+            arrayOf(
+                arrayOf(sxx, sx, sxy).toDoubleArray(),
+                arrayOf(sx, st.n.toDouble(), sy).toDoubleArray()
+            )
+        )
+        val func: (Double) -> Double = { exp(result[1]) * it.pow(result[0]) }
+        val str = "e^${round(result[1])}*x^${round(result[0])}"
+        val sigma = calcSigma(func, st)
+        st.possibleFunc.add(PossibleFunc("Pow", str, func, sigma))
+    }
+    fun expApproximate(st: ProgramState) {
+        val points = ArrayList<Int>()
+        for (i in 0 until st.n) {
+            if (st.y[i] > 0) points.add(i)
+        }
+        if (points.size < 2) {
+            throw IllegalStateException("Must have at least 2 points.")
+        }
+        var sx = 0.0
+        var sxx = 0.0
+        var sy = 0.0
+        var sxy = 0.0
+        for (i in points) {
+            sx += st.x[i]
+            sxx += st.x[i].pow(2)
+            sy += ln(st.y[i])
+            sxy += st.x[i] * ln(st.y[i])
+        }
+        val result = solveSystemAndCatch(
+            arrayOf(
+                arrayOf(sxx, sx, sxy).toDoubleArray(),
+                arrayOf(sx, st.n.toDouble(), sy).toDoubleArray()
+            )
+        )
+        val func: (Double) -> Double = { exp(result[1]) * exp(result[0]*it) }
+        val str = "e^${round(result[1])}*e^(${round(result[0])}*x)"
+        val sigma = calcSigma(func, st)
+        st.possibleFunc.add(PossibleFunc("Exp", str, func, sigma))
+    }
+    fun lnApproximate(st: ProgramState) {
+        val points = ArrayList<Int>()
+        for (i in 0 until st.n) {
+            if (st.x[i] > 0) points.add(i)
+        }
+        if (points.size < 2) {
+            throw IllegalStateException("Must have at least 2 points.")
+        }
+        var sx = 0.0
+        var sxx = 0.0
+        var sy = 0.0
+        var sxy = 0.0
+        for (i in points) {
+            sx += ln(st.x[i])
+            sxx += ln(st.x[i]).pow(2)
+            sy += st.y[i]
+            sxy += ln(st.x[i] * st.y[i])
+        }
+        val result = solveSystemAndCatch(
+            arrayOf(
+                arrayOf(sxx, sx, sxy).toDoubleArray(),
+                arrayOf(sx, st.n.toDouble(), sy).toDoubleArray()
+            )
+        )
+        val func: (Double) -> Double = { result[0]*ln(it) + result[1] }
+        val str = "${round(result[0])}*ln(x)+${round(result[1])}"
+        val sigma = calcSigma(func, st)
+        st.possibleFunc.add(PossibleFunc("Log", str, func, sigma))
+    }
 }
 
 data class PossibleFunc(val type: String, val funcString: String, val func: (Double) -> Double, val midEq: Double)

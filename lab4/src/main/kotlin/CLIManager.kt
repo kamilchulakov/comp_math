@@ -4,6 +4,7 @@ import LabConfiguration.sleepTime
 import LabConfiguration.uiMult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.lang.Math.max
 
 object CLIManager {
     suspend fun progressBar(programState: ProgramState) {
@@ -40,5 +41,18 @@ object CLIManager {
             if (i == progressNum) break
         }
         println()
+    }
+
+    fun printPossibleFunc(st: ProgramState) {
+        var bigType = 0
+        var bigStr = 0
+        for (i in st.possibleFunc) {
+            bigType = bigType.coerceAtLeast(i.type.length)
+            bigStr = bigStr.coerceAtLeast(i.funcString.length)
+        }
+        st.possibleFunc.forEach {
+            println("${it.type}${" ".repeat(bigType-it.type.length)} | " +
+                    "${it.funcString}${" ".repeat(bigStr-it.funcString.length)} | ${it.midEq}")
+        }
     }
 }

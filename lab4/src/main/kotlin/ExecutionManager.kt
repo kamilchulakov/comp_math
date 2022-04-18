@@ -1,3 +1,4 @@
+import CLIManager.printPossibleFunc
 import GUIManager.draw
 import LabConfiguration.delimiter
 import LabConfiguration.sleepTime
@@ -106,9 +107,7 @@ object ExecutionManager {
             executeByState(st)
         }
         println("Best approximate: "+(st.stateType as Finished).resFunc)
-        st.possibleFunc.forEach {
-            println("${it.type} ${it.funcString} ${it.midEq}")
-        }
+        printPossibleFunc(st)
         draw(st)
     }
 }

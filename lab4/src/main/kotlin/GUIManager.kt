@@ -20,18 +20,18 @@ object GUIManager {
     fun draw(st: ProgramState) {
         val funcList: List<PossibleFunc> = st.possibleFunc
         val plots = HashMap<String, Plot>()
-        for (func in funcList) {
-            val data = mapOf<String, List<*>>(
-                "xvar" to List(n) { i:Int-> i*eps },
-                "yvar" to List(n) { i:Int-> func.func(i*eps) }
-            )
-            plots[func.type] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
-        }
-        val data = mapOf<String, List<*>>(
+        val data2 = mapOf<String, List<*>>(
             "xvar" to List(st.n) { i:Int-> st.x[i] },
             "yvar" to List(st.n) { i:Int-> st.y[i] }
         )
-        plots["Points"] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
+        for (func in funcList) {
+            val data = mapOf<String, List<*>>(
+                "xvar" to List(n) { i:Int-> i*eps } + List(st.n) { i:Int-> st.x[i] },
+                "yvar" to List(n) { i:Int-> func.func(i*eps) } + List(st.n) { i:Int-> st.y[i] }
+            )
+            plots[func.type] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
+        }
+        plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
 
         val selectedPlotKey = plots.keys.first()
         val controller = Controller(

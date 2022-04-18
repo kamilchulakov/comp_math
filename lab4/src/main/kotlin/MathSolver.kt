@@ -18,7 +18,7 @@ object MathSolver {
         val solver = GaussSeidelSolver(arr)
         if (solver.makeDominant()) {
             throw IllegalStateException("Bad matrix for Gauss-Seidel solver!")
-        }
+        } else println("Диагональное преобладание достигнуто.")
         return solver.solve()
     }
 
@@ -184,7 +184,7 @@ object MathSolver {
     fun lnApproximate(st: ProgramState) {
         val points = ArrayList<Int>()
         for (i in 0 until st.n) {
-            if (st.x[i] > 0) points.add(i)
+            if (st.x[i] > 0.0) points.add(i)
         }
         if (points.size < 2) {
             throw IllegalStateException("Must have at least 2 points.")

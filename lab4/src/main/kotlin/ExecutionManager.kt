@@ -11,6 +11,7 @@ import MathSolver.sqrtApproximate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Collections.min
+import Utils.round
 
 object ExecutionManager {
     private suspend fun updateState(st: ProgramState, stateType: StateType) {
@@ -32,12 +33,17 @@ object ExecutionManager {
                     setN = true
                     st.x.add(args[0].toDouble())
                     st.y.add(args[1].toDouble())
+                    if (st.x[i] == 0.0) st.x[i] = st.x[i] + 0.001
+                    if (st.y[i] == 0.0) st.y[i] = st.y[i] + 0.001
                 } else if (args.size == 1 && !setN) {
                     setN = true
                     st.n = args[0].toInt()
+                    i--
                 } else {
                     st.x.add(args[0].toDouble())
                     st.y.add(args[1].toDouble())
+                    if (st.x[i] == 0.0) st.x[i] = st.x[i] + 0.001
+                    if (st.y[i] == 0.0) st.y[i] = st.y[i] + 0.001
                 }
             }
             i++
@@ -81,7 +87,9 @@ object ExecutionManager {
         val mn =  min(st.possibleFunc.map { it.midEq })
         updateState(st, Finished(st.possibleFunc.first {
             it.midEq == mn
-        }.type))
+        }.type, st.possibleFunc.first {
+            it.midEq == mn
+        }.func))
     }
 
     private suspend fun executeByState(st: ProgramState) {
@@ -108,6 +116,15 @@ object ExecutionManager {
         }
         println("Best approximate: "+(st.stateType as Finished).resFunc)
         printPossibleFunc(st)
+        println("_____________________________________")
+        st.x.forEach {
+            print("${round((st.stateType as Finished).func(it))} ")
+        }
+        println()
+        st.y.forEach {
+            print("$it ")
+        }
+        println()
         draw(st)
     }
 }

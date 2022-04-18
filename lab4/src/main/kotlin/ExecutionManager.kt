@@ -103,7 +103,7 @@ object ExecutionManager {
     }
 
     suspend fun execute(st: ProgramState) {
-        while (!(st.stateType is Finished || st.stateType is Terminated)) {
+        while (st.stateType !is Finished) {
             executeByState(st)
         }
         println("Best approximate: "+(st.stateType as Finished).resFunc)

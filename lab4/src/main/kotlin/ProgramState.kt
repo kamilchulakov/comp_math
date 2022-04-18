@@ -18,8 +18,6 @@ fun stateProgressNum(stateType: StateType): Int {
         is ReadingInput -> 2
         is Calculating -> stateType.numOfFunc + 4
         is Calculated -> 4 + possibleFuncNum
-        is Blocked -> stateProgressNum(stateType.prevState)
-        is Terminated -> possibleFuncNum + stateNum - 1
         is Finished -> possibleFuncNum + stateNum - 1
         else -> {
             throw IllegalStateException("Something went wrong.")
@@ -32,7 +30,5 @@ object New: StateType()
 object Started: StateType()
 object ReadingInput: StateType()
 class Calculating(val numOfFunc: Int = 0): StateType()
-class Blocked(val prevState: StateType) : StateType()
-class Terminated(val ex: Exception): StateType()
 object Calculated: StateType()
 class Finished(val resFunc: String): StateType()

@@ -6,7 +6,13 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 object MathSolver {
+    fun lagrangeInterpolation(st: ProgramState) {
 
+    }
+
+    fun gaussInterpolation(st: ProgramState) {
+
+    }
 }
 
 data class ResultFunc(val type: String, val funcString: String, val func: (Double) -> Double)

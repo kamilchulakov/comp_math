@@ -1,5 +1,8 @@
+import GUIManager.draw
 import LabConfiguration.delimiter
 import LabConfiguration.sleepTime
+import MathSolver.lagrangeInterpolation
+import MathSolver.gaussInterpolation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Collections.min
@@ -45,9 +48,11 @@ object ExecutionManager {
     private suspend fun peekCalculatingAndUpdate(st: ProgramState) {
         when ((st.stateType as Calculating).numOfFunc) {
             0 -> {
+                lagrangeInterpolation(st)
                 updateState(st, Calculating(1))
             }
             1 -> {
+                gaussInterpolation(st)
                 updateState(st, Finished)
             }
         }
@@ -74,6 +79,7 @@ object ExecutionManager {
             executeByState(st)
         }
         println()
-//        draw(st)
+        st.resultFuncs.forEach { println(it.funcString) }
+        draw(st)
     }
 }

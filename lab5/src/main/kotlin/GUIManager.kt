@@ -17,90 +17,90 @@ object GUIManager {
     private const val n = 2000
     private const val eps = 10.0 / n
 
-//    fun draw(st: ProgramState) {
-//        val funcList: List<PossibleFunc> = st.possibleFunc
-//        val plots = HashMap<String, Plot>()
-//        val data2 = mapOf<String, List<*>>(
-//            "xvar" to List(st.n) { i:Int-> st.x[i] },
-//            "yvar" to List(st.n) { i:Int-> st.y[i] }
-//        )
-//        for (func in funcList) {
-//            val data = mapOf<String, List<*>>(
-//                "xvar" to List(n) { i:Int-> i*eps } + List(st.n) { i:Int-> st.x[i] },
-//                "yvar" to List(n) { i:Int-> func.func(i*eps) } + List(st.n) { i:Int-> st.y[i] }
-//            )
-//            plots[func.type] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
-//        }
-//        plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
-//
-//        val selectedPlotKey = plots.keys.first()
-//        val controller = Controller(
-//            plots,
-//            selectedPlotKey,
-//            false
-//        )
-//
-//        val window = JFrame("Lets plot Kotlin")
-//        window.defaultCloseOperation = EXIT_ON_CLOSE
-//        window.contentPane.layout = BoxLayout(window.contentPane, BoxLayout.Y_AXIS)
-//
-//        // Add controls
-//        val controlsPanel = Box.createHorizontalBox().apply {
-//            // Plot selector
-//            val plotButtonGroup = ButtonGroup()
-//            for (key in plots.keys) {
-//                plotButtonGroup.add(
-//                    JRadioButton(key, key == selectedPlotKey).apply {
-//                        addActionListener {
-//                            controller.plotKey = this.text
-//                        }
-//                    }
-//                )
-//            }
-//
-//            this.add(Box.createHorizontalBox().apply {
-//                border = BorderFactory.createTitledBorder("Plot")
-//                for (elem in plotButtonGroup.elements) {
-//                    add(elem)
-//                }
-//            })
-//
-//            // Preserve aspect ratio selector
-//            val aspectRadioButtonGroup = ButtonGroup()
-//            aspectRadioButtonGroup.add(JRadioButton("Original", false).apply {
-//                addActionListener {
-//                    controller.preserveAspectRadio = true
-//                }
-//            })
-//            aspectRadioButtonGroup.add(JRadioButton("Fit container", true).apply {
-//                addActionListener {
-//                    controller.preserveAspectRadio = false
-//                }
-//            })
-//
-//            this.add(Box.createHorizontalBox().apply {
-//                border = BorderFactory.createTitledBorder("Aspect ratio")
-//                for (elem in aspectRadioButtonGroup.elements) {
-//                    add(elem)
-//                }
-//            })
-//        }
-//        window.contentPane.add(controlsPanel)
-//
-//        // Add plot panel
-//        val plotContainerPanel = JPanel(GridLayout())
-//        window.contentPane.add(plotContainerPanel)
-//
-//        controller.plotContainerPanel = plotContainerPanel
-//        controller.rebuildPlotComponent()
-//
-//        SwingUtilities.invokeLater {
-//            window.pack()
-//            window.size = Dimension(850, 400)
-//            window.setLocationRelativeTo(null)
-//            window.isVisible = true
-//        }
-//    }
+    fun draw(st: ProgramState) {
+        val funcList: List<ResultFunc> = st.resultFuncs
+        val plots = HashMap<String, Plot>()
+        val data2 = mapOf<String, List<*>>(
+            "xvar" to List(st.n) { i:Int-> st.x[i] },
+            "yvar" to List(st.n) { i:Int-> st.y[i] }
+        )
+        for (func in funcList) {
+            val data = mapOf<String, List<*>>(
+                "xvar" to List(n) { i:Int-> i*eps } + List(st.n) { i:Int-> st.x[i] },
+                "yvar" to List(n) { i:Int-> func.func(i*eps) } + List(st.n) { i:Int-> st.y[i] }
+            )
+            plots[func.type] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
+        }
+        plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
+
+        val selectedPlotKey = plots.keys.first()
+        val controller = Controller(
+            plots,
+            selectedPlotKey,
+            false
+        )
+
+        val window = JFrame("Lets plot Kotlin")
+        window.defaultCloseOperation = EXIT_ON_CLOSE
+        window.contentPane.layout = BoxLayout(window.contentPane, BoxLayout.Y_AXIS)
+
+        // Add controls
+        val controlsPanel = Box.createHorizontalBox().apply {
+            // Plot selector
+            val plotButtonGroup = ButtonGroup()
+            for (key in plots.keys) {
+                plotButtonGroup.add(
+                    JRadioButton(key, key == selectedPlotKey).apply {
+                        addActionListener {
+                            controller.plotKey = this.text
+                        }
+                    }
+                )
+            }
+
+            this.add(Box.createHorizontalBox().apply {
+                border = BorderFactory.createTitledBorder("Plot")
+                for (elem in plotButtonGroup.elements) {
+                    add(elem)
+                }
+            })
+
+            // Preserve aspect ratio selector
+            val aspectRadioButtonGroup = ButtonGroup()
+            aspectRadioButtonGroup.add(JRadioButton("Original", false).apply {
+                addActionListener {
+                    controller.preserveAspectRadio = true
+                }
+            })
+            aspectRadioButtonGroup.add(JRadioButton("Fit container", true).apply {
+                addActionListener {
+                    controller.preserveAspectRadio = false
+                }
+            })
+
+            this.add(Box.createHorizontalBox().apply {
+                border = BorderFactory.createTitledBorder("Aspect ratio")
+                for (elem in aspectRadioButtonGroup.elements) {
+                    add(elem)
+                }
+            })
+        }
+        window.contentPane.add(controlsPanel)
+
+        // Add plot panel
+        val plotContainerPanel = JPanel(GridLayout())
+        window.contentPane.add(plotContainerPanel)
+
+        controller.plotContainerPanel = plotContainerPanel
+        controller.rebuildPlotComponent()
+
+        SwingUtilities.invokeLater {
+            window.pack()
+            window.size = Dimension(850, 400)
+            window.setLocationRelativeTo(null)
+            window.isVisible = true
+        }
+    }
 }
 
 private class Controller(

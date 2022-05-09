@@ -1,3 +1,4 @@
+import Utils.getRandomIntInRange
 import javafx.application.Platform
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.values.Color
@@ -16,6 +17,15 @@ object GUIManager {
     private const val n = 2000
     private const val eps = 10.0 / n
 
+    private fun getRandomColor(): Color {
+        return when (getRandomIntInRange(0, 5)) {
+            0 -> Color.RED
+            1 -> Color.GREEN
+            2 -> Color.ORANGE
+            3 -> Color.LIGHT_PINK
+            else -> Color.BLACK
+        }
+    }
     fun draw(st: ProgramState) {
         val interpolationValues: List<InterpolationValue> = st.interpolationValues
         val plots = HashMap<String, Plot>()
@@ -23,14 +33,15 @@ object GUIManager {
             "xvar" to List(st.n) { i:Int-> st.x[i] },
             "yvar" to List(st.n) { i:Int-> st.y[i] }
         )
+        var i = 1
         for (it in interpolationValues) {
             val data = mapOf<String, List<*>>(
                 "xvar" to listOf(st.interpolationParam) + List(st.n) { i:Int-> st.x[i] },
                 "yvar" to listOf(it.result) + List(st.n) { i:Int-> st.y[i] }
             )
-            plots[it.method] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 2, color = Color.BLACK)
+            plots[it.method] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = i++, color = getRandomColor())
         }
-        plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
+        plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = i, color = getRandomColor())
 
         val selectedPlotKey = plots.keys.first()
         val controller = Controller(

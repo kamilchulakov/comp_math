@@ -1,5 +1,3 @@
-import Utils.round
-
 object MathSolver {
     fun lagrangeInterpolation(st: ProgramState) {
         val resPoints = mutableListOf<Double>()
@@ -26,7 +24,7 @@ object MathSolver {
             resPoints[i] *= st.y[i]
         }
 
-        st.interpolationValues.add(InterpolationValue("Многочлен Лагранжа", round(resPoints.sum())))
+        st.interpolationValues.add(InterpolationValue("Многочлен Лагранжа", resPoints.sum().prettyRound()))
     }
 
     fun gaussInterpolation(st: ProgramState) {

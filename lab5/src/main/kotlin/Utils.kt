@@ -1,7 +1,13 @@
+import java.util.*
 import kotlin.math.pow
 
 object Utils {
-    fun round(n: Double, k: Int = 3): Double {
-        return kotlin.math.round(n * 10.0.pow(k)) / 10.0.pow(k)
+    private val random = Random()
+    fun getRandomIntInRange(a: Int, b: Int): Int {
+        return random.nextInt(a, b)
     }
+}
+
+fun Double.prettyRound(k: Int = 3): Double {
+    return kotlin.math.round(this * 10.0.pow(k)) / 10.0.pow(k)
 }

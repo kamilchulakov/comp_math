@@ -1,5 +1,6 @@
 import GUIManager.draw
-import LabConfiguration.delimiter
+import IOManager.readInputFromCLI
+import IOManager.readInputFromFile
 import LabConfiguration.sleepTime
 import MathSolver.gaussInterpolation
 import MathSolver.lagrangeInterpolation
@@ -16,33 +17,10 @@ object ExecutionManager {
     }
 
     private fun readInput(st: ProgramState) {
-        var setN = false
-        var i = 0
-        while (st.scanner.hasNextLine() && i < st.n) {
-            val line = st.scanner.nextLine()
-            if (line.isNotBlank()) {
-                val args = line.split(delimiter)
-                if (args.size > 1 && !setN) {
-                    setN = true
-                    st.x.add(args[0].toDouble())
-                    st.y.add(args[1].toDouble())
-                    if (st.x[i] == 0.0) st.x[i] = st.x[i] + 0.001
-                    if (st.y[i] == 0.0) st.y[i] = st.y[i] + 0.001
-                } else if (args.size == 1 && !setN) {
-                    setN = true
-                    st.n = args[0].toInt()
-                    i--
-                } else {
-                    st.x.add(args[0].toDouble())
-                    st.y.add(args[1].toDouble())
-                    if (st.x[i] == 0.0) st.x[i] = st.x[i] + 0.001
-                    if (st.y[i] == 0.0) st.y[i] = st.y[i] + 0.001
-                }
-            }
-            i++
+        when (st.fileInput) {
+            true -> readInputFromFile(st)
+            else -> readInputFromCLI(st)
         }
-        // TODO: check if contains
-        st.interpolationParam = st.scanner.nextDouble()
     }
 
     private suspend fun peekCalculatingAndUpdate(st: ProgramState) {

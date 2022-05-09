@@ -6,6 +6,7 @@ import java.util.*
 
 data class ProgramState(val x: MutableList<Double> = ArrayList(), val y: MutableList<Double> = ArrayList(),
                         var n: Int = N,
+                        val fileInput: Boolean = true,
                         var interpolationParam: Double = 0.0,
                         val interpolationValues: MutableList<InterpolationValue> = ArrayList(),
                         val resultFuncs: MutableList<ResultFunc> = ArrayList(),

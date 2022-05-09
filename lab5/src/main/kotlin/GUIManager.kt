@@ -22,7 +22,7 @@ object GUIManager {
             0 -> Color.RED
             1 -> Color.GREEN
             2 -> Color.ORANGE
-            3 -> Color.LIGHT_PINK
+            3 -> Color.DARK_MAGENTA
             else -> Color.BLACK
         }
     }
@@ -39,9 +39,9 @@ object GUIManager {
                 "xvar" to listOf(st.interpolationParam) + List(st.n) { i:Int-> st.x[i] },
                 "yvar" to listOf(it.result) + List(st.n) { i:Int-> st.y[i] }
             )
-            plots[it.method] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = i++, color = getRandomColor())
+            plots[it.method] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = i++, color = getRandomColor(), size = 4)
         }
-        plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = i, color = getRandomColor())
+        plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = i, color = getRandomColor(), size = 4)
 
         val selectedPlotKey = plots.keys.first()
         val controller = Controller(

@@ -1,3 +1,7 @@
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
+
 object LabConfiguration {
     const val N = 10
     const val interpolationMethods = 2
@@ -7,5 +11,9 @@ object LabConfiguration {
     const val badWaiting = 50
     const val sleepTime = 100L
     const val delimiter = " "
-    // TODO: add default functions to show user
+    val functions = listOf(
+        "√x" to {x: Double -> sqrt(x)},
+        "sin(x)" to {x: Double -> sin(x)},
+        "x^2" to {x: Double -> x.pow(2)}
+    )
 }

@@ -10,7 +10,6 @@ fun main(args: Array<String>) {
     val st = ProgramState(
         fileInput = args.isNotEmpty(),
         scanner = when (args.isNotEmpty()) {
-            // TODO: System.in
             false -> Scanner(System.`in`)
             else -> {
                 Scanner(File(args[0]))

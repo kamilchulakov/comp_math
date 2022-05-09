@@ -18,7 +18,10 @@ object ExecutionManager {
 
     private fun readInput(st: ProgramState) {
         when (st.fileInput) {
-            true -> readInputFromFile(st)
+            true -> {
+                readInputFromFile(st)
+                st.interpolationParam = st.scanner.nextLine().toDouble()
+            }
             else -> readInputFromCLI(st)
         }
     }

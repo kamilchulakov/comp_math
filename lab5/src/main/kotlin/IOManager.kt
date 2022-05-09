@@ -1,5 +1,6 @@
 import LabConfiguration.badWaiting
 import LabConfiguration.delimiter
+import LabConfiguration.functions
 import LabConfiguration.progressNum
 import LabConfiguration.sleepTime
 import LabConfiguration.uiMult
@@ -56,7 +57,7 @@ object IOManager {
                 val args = line.split(delimiter)
                 if (args.size > 1 && !setN) {
                     setN = true
-                    println("\nUsing default table size: ${st.n}")
+                    println("\nИспользую количество строк по-умолчанию: ${st.n}")
                     addAndCheck(args[0].toDouble(), st.x)
                     addAndCheck(args[1].toDouble(), st.y)
                 } else if (args.size == 1 && !setN) {
@@ -70,11 +71,58 @@ object IOManager {
             }
             i++
         }
-        // TODO: check if contains
-        st.interpolationParam = st.scanner.nextDouble()
     }
 
-    fun readInputFromCLI(st: ProgramState) {
-
+    fun readInputFromCLI(st: ProgramState, time: Int = 0) {
+        println()
+        when (time) {
+            0 -> println("Добрый день!")
+            1 -> println("О, снова ты, как приятно видеть знакомое лицо.")
+            2 -> println("Ты испытываещь моё терпение.")
+            else -> {
+                println("Отдохни немного.")
+                Thread.sleep(1000)
+            }
+        }
+        println("Введите 1, если хотите ввести табличную функцию.\nВведите 2, если хотите выбрать функцию.")
+        when (st.scanner.nextLine().toInt()) {
+            1 -> {
+                println("Введите число строк.")
+                st.n = st.scanner.nextLine().toInt()
+                println("Вводите пары координат x и y точек.")
+                for (i in 0 until st.n) {
+                    val args = st.scanner.nextLine().split(delimiter)
+                    addAndCheck(args[0].toDouble(), st.x)
+                    addAndCheck(args[1].toDouble(), st.y)
+                }
+                println("Введите x.")
+                st.interpolationParam = st.scanner.nextLine().toDouble()
+            }
+            2 -> {
+                println("Выберете функцию из предложенных:")
+                functions.forEachIndexed { index, (str, _) -> println("$index - $str") }
+                val ch = st.scanner.nextInt()
+                if (ch in functions.indices) {
+                    println("Введите левую границу.")
+                    val a = st.scanner.nextDouble()
+                    println("Введите правую границу.")
+                    val b = st.scanner.nextDouble()
+                    println("Введите количество узлов.")
+                    val m = st.scanner.nextInt()
+                    val step = (b - a) / m
+                    var i = a
+                    val fc = functions[ch].second
+                    while (i <= b) {
+                        addAndCheck(i, st.x)
+                        addAndCheck(fc(i), st.y)
+                        i += step
+                    }
+                } else {
+                    println("Упс... такой функции нет, начнём сначала.")
+                    readInputFromCLI(st, time+1)
+                }
+            }
+            else -> readInputFromCLI(st, time+1)
+        }
     }
 }

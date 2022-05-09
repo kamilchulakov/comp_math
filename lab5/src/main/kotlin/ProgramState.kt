@@ -26,7 +26,6 @@ fun stateProgressNum(stateType: StateType): Int {
     }
 }
 
-// TODO: make different ReadingInput states to make it easy to divide and conquer
 sealed class StateType
 object New: StateType()
 object Started: StateType()

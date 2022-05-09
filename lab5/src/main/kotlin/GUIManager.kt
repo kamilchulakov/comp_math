@@ -2,14 +2,12 @@ import javafx.application.Platform
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.vis.swing.jfx.DefaultPlotPanelJfx
-import java.awt.Dimension
-import java.awt.GridLayout
-import javax.swing.JPanel
-import javax.swing.SwingUtilities
 import jetbrains.letsPlot.geom.geomPoint
 import jetbrains.letsPlot.intern.Plot
 import jetbrains.letsPlot.intern.toSpec
 import jetbrains.letsPlot.letsPlot
+import java.awt.Dimension
+import java.awt.GridLayout
 import javax.swing.*
 import javax.swing.JFrame.EXIT_ON_CLOSE
 

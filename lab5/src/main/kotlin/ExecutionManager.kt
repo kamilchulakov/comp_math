@@ -1,12 +1,10 @@
 import GUIManager.draw
 import LabConfiguration.delimiter
 import LabConfiguration.sleepTime
-import MathSolver.lagrangeInterpolation
 import MathSolver.gaussInterpolation
+import MathSolver.lagrangeInterpolation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.Collections.min
-import Utils.round
 
 object ExecutionManager {
     private suspend fun updateState(st: ProgramState, stateType: StateType) {
@@ -43,6 +41,8 @@ object ExecutionManager {
             }
             i++
         }
+        // TODO: check if contains
+        st.interpolationParam = st.scanner.nextDouble()
     }
 
     private suspend fun peekCalculatingAndUpdate(st: ProgramState) {
@@ -79,7 +79,7 @@ object ExecutionManager {
             executeByState(st)
         }
         println()
-        st.resultFuncs.forEach { println(it.funcString) }
+        st.interpolationValues.forEach { println(it) }
         draw(st)
     }
 }

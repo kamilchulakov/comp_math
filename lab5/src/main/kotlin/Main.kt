@@ -1,13 +1,15 @@
-import ExecutionManager.execute
 import CLIManager.progressBar
-import java.util.*
-import kotlinx.coroutines.*
+import ExecutionManager.execute
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.util.*
 
 // 1, 3 => многочлен Лагранжа и Гаусса
 fun main(args: Array<String>) {
     val st = ProgramState(scanner =
         when (args.isNotEmpty()) {
+            // TODO: System.in
             false -> Scanner(System.`in`)
             else -> Scanner(File(args[0]))
         }

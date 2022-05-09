@@ -3,10 +3,12 @@ import LabConfiguration.N
 import LabConfiguration.interpolationMethods
 import LabConfiguration.stateNum
 import kotlinx.coroutines.channels.Channel
-import java.util.Scanner
+import java.util.*
 
 data class ProgramState(val x: MutableList<Double> = ArrayList(), val y: MutableList<Double> = ArrayList(),
                         var n: Int = N, val func: (Double) -> Double = FUNC,
+                        var interpolationParam: Double = 0.0,
+                        val interpolationValues: MutableList<InterpolationValue> = ArrayList(),
                         val resultFuncs: MutableList<ResultFunc> = ArrayList(),
                         val scanner: Scanner, var stateType: StateType = New,
                         val stateChannel: Channel<StateType> = Channel())
@@ -24,6 +26,7 @@ fun stateProgressNum(stateType: StateType): Int {
     }
 }
 
+// TODO: make different ReadingInput states to make it easy to divide and conquer
 sealed class StateType
 object New: StateType()
 object Started: StateType()

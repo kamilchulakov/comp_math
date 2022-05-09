@@ -1,8 +1,5 @@
-import kotlin.math.pow
-
 object LabConfiguration {
     const val N = 10
-    val FUNC: (Double) -> Double = { (4*it) / (it.pow(4)+4)}
     const val interpolationMethods = 2
     const val stateNum = 4
     const val progressNum = stateNum + interpolationMethods - 1
@@ -10,4 +7,5 @@ object LabConfiguration {
     const val badWaiting = 50
     const val sleepTime = 100L
     const val delimiter = " "
+    // TODO: add default functions to show user
 }

@@ -101,14 +101,15 @@ object IOManager {
             2 -> {
                 println("Выберете функцию из предложенных:")
                 functions.forEachIndexed { index, (str, _) -> println("$index - $str") }
-                val ch = st.scanner.nextInt()
+                val ch = st.scanner.nextLine().toInt()
                 if (ch in functions.indices) {
                     println("Введите левую границу.")
-                    val a = st.scanner.nextDouble()
+                    val a = st.scanner.nextLine().toDouble()
                     println("Введите правую границу.")
-                    val b = st.scanner.nextDouble()
+                    val b = st.scanner.nextLine().toDouble()
                     println("Введите количество узлов.")
-                    val m = st.scanner.nextInt()
+                    val m = st.scanner.nextLine().toInt()
+                    st.n = m
                     val step = (b - a) / m
                     var i = a
                     val fc = functions[ch].second
@@ -117,6 +118,8 @@ object IOManager {
                         addAndCheck(fc(i), st.y)
                         i += step
                     }
+                    println("Введите x.")
+                    st.interpolationParam = st.scanner.nextLine().toDouble()
                 } else {
                     println("Упс... такой функции нет, начнём сначала.")
                     readInputFromCLI(st, time+1)

@@ -1,5 +1,6 @@
 import javafx.application.Platform
 import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.vis.swing.jfx.DefaultPlotPanelJfx
 import jetbrains.letsPlot.geom.geomPoint
@@ -16,18 +17,18 @@ object GUIManager {
     private const val eps = 10.0 / n
 
     fun draw(st: ProgramState) {
-        val funcList: List<ResultFunc> = st.resultFuncs
+        val interpolationValues: List<InterpolationValue> = st.interpolationValues
         val plots = HashMap<String, Plot>()
         val data2 = mapOf<String, List<*>>(
             "xvar" to List(st.n) { i:Int-> st.x[i] },
             "yvar" to List(st.n) { i:Int-> st.y[i] }
         )
-        for (func in funcList) {
+        for (it in interpolationValues) {
             val data = mapOf<String, List<*>>(
-                "xvar" to List(n) { i:Int-> i*eps } + List(st.n) { i:Int-> st.x[i] },
-                "yvar" to List(n) { i:Int-> func.func(i*eps) } + List(st.n) { i:Int-> st.y[i] }
+                "xvar" to listOf(st.interpolationParam) + List(st.n) { i:Int-> st.x[i] },
+                "yvar" to listOf(it.result) + List(st.n) { i:Int-> st.y[i] }
             )
-            plots[func.type] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
+            plots[it.method] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = 2, color = Color.BLACK)
         }
         plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1)
 

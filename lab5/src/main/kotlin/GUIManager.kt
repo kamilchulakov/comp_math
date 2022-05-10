@@ -41,7 +41,7 @@ object GUIManager {
             )
             plots[it.method] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = i++, color = getRandomColor(), size = 4)
         }
-        plots["Points"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = i, color = getRandomColor(), size = 4)
+        plots["Точки"] = letsPlot(data2) { x = "xvar"; y = "yvar" } + geomPoint(shape = i, color = getRandomColor(), size = 4)
 
         val selectedPlotKey = plots.keys.first()
         val controller = Controller(
@@ -77,19 +77,19 @@ object GUIManager {
 
             // Preserve aspect ratio selector
             val aspectRadioButtonGroup = ButtonGroup()
-            aspectRadioButtonGroup.add(JRadioButton("Original", false).apply {
+            aspectRadioButtonGroup.add(JRadioButton("Стандарт", false).apply {
                 addActionListener {
                     controller.preserveAspectRadio = true
                 }
             })
-            aspectRadioButtonGroup.add(JRadioButton("Fit container", true).apply {
+            aspectRadioButtonGroup.add(JRadioButton("Широко", true).apply {
                 addActionListener {
                     controller.preserveAspectRadio = false
                 }
             })
 
             this.add(Box.createHorizontalBox().apply {
-                border = BorderFactory.createTitledBorder("Aspect ratio")
+                border = BorderFactory.createTitledBorder("Ширина")
                 for (elem in aspectRadioButtonGroup.elements) {
                     add(elem)
                 }

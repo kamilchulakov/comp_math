@@ -60,7 +60,8 @@ object ExecutionManager {
             executeByState(st)
         }
         println()
-        st.interpolationValues.forEach { println(it) }
+        println("Для x = ${st.interpolationParam}")
+        st.interpolationValues.forEach { println("${it.method} - ${it.result}") }
         draw(st)
     }
 }

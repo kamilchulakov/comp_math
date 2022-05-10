@@ -36,8 +36,8 @@ object GUIManager {
         var i = 1
         for (it in interpolationValues) {
             val data = mapOf<String, List<*>>(
-                "xvar" to listOf(st.interpolationParam) + List(st.n) { i:Int-> st.x[i] },
-                "yvar" to listOf(it.result) + List(st.n) { i:Int-> st.y[i] }
+                "xvar" to listOf(st.interpolationParam) + List(st.n) { j:Int-> st.x[j] },
+                "yvar" to listOf(it.result) + List(st.n) { j:Int-> st.y[j] }
             )
             plots[it.method] = letsPlot(data) { x = "xvar"; y = "yvar" } + geomPoint(shape = i++, color = getRandomColor(), size = 4)
         }

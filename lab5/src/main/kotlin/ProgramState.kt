@@ -20,9 +20,6 @@ fun stateProgressNum(stateType: StateType): Int {
         is ReadingInput -> 2
         is Calculating -> stateType.numOfFunc + 3
         is Finished -> interpolationMethods + stateNum - 1
-        else -> {
-            throw IllegalStateException("Something went wrong.")
-        }
     }
 }
 

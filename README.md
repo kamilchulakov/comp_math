@@ -7,3 +7,4 @@
 - [Lab 3](https://github.com/kamilchulakov/comp_math/tree/master/lab3)
 - [Lab 4](https://github.com/kamilchulakov/comp_math/tree/master/lab4)
 - [Lab 5](https://github.com/kamilchulakov/comp_math/tree/master/lab5)
+- [Lab Probability](https://github.com/kamilchulakov/comp_math/tree/master/lab_probability)

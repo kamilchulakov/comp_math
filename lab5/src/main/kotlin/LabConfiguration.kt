@@ -11,6 +11,7 @@ object LabConfiguration {
     const val badWaiting = 50
     const val sleepTime = 100L
     const val delimiter = " "
+    const val roundParam = 3
     val functions = listOf(
         "√x" to {x: Double -> sqrt(x)},
         "sin(x)" to {x: Double -> sin(x)},

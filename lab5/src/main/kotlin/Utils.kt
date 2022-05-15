@@ -8,6 +8,6 @@ object Utils {
     }
 }
 
-fun Double.prettyRound(k: Int = 3): Double {
+fun Double.prettyRound(k: Int = LabConfiguration.roundParam): Double {
     return kotlin.math.round(this * 10.0.pow(k)) / 10.0.pow(k)
 }

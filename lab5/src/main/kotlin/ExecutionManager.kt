@@ -59,8 +59,8 @@ object ExecutionManager {
         while (st.stateType !is Finished) {
             executeByState(st)
         }
-        println()
-        println("Для x = ${st.interpolationParam}")
+        st.stateChannel.send(st.stateType)
+        println("\nДля x = ${st.interpolationParam}")
         st.interpolationValues.forEach { println("${it.method} - ${it.result}") }
         draw(st)
     }

@@ -27,14 +27,21 @@ object MathSolver {
         st.interpolationValues.add(InterpolationValue("Многочлен Лагранжа", resPoints.sum().prettyRound()))
     }
 
-    fun tMult(t: Double, i: Int): Double {
-        var temp = t
-        for (j in 1 until i) {
-            temp *= if (j % 2 == 1) {
-                (t - j)
-            } else
-                (t + j)
-        }
+    fun tMult1(curr: Double, t: Double, i: Int): Double {
+        var temp = curr
+        val j = (i-1)
+        temp *= if (j % 2 == 1) {
+            (t - j)
+        } else (t + j)
+        return temp
+    }
+
+    fun tMult2(curr: Double, t: Double, i: Int): Double {
+        var temp = curr
+        val j = (i-1)
+        temp *= if (j % 2 == 0) {
+            (t - j)
+        } else (t + j)
         return temp
     }
 
@@ -82,13 +89,28 @@ object MathSolver {
             }
         }
 
-        var sum = otherY[(st.n/2)][0]
+        println("\nТаблица для многочлена Гаусса:")
+        for (i in 0 until st.n) {
+            println(otherY[i].joinToString(separator = " "))
+        }
+
+        var sum1 = otherY[(st.n/2)][0]
+        var sum2 = otherY[(st.n/2)][0]
         val t = (st.interpolationParam - st.x[(st.n/2)]) / (st.x[1] - st.x[0])
+        var t1 = 1.0
+        var t2 = 1.0
+        var fact = 1
 
         for (i in 1 until st.n) {
-            sum += (tMult(t, i) * otherY[((st.n - i) / 2)][i]) / i
+            fact *= i
+            t1 = tMult1(t1, t, i)
+            sum1 += (t1 * otherY[((st.n - i) / 2)][i]) / fact
+            t2 = tMult2(t2, t, i)
+            sum2 += (t2 * otherY[((st.n - i) / 2 - i%2)][i]) / fact
         }
-        st.interpolationValues.add(InterpolationValue("Многочлен Гаусса", sum.prettyRound()))
+        st.interpolationValues.add(InterpolationValue("Многочлен Гаусса 1", sum1.prettyRound()))
+        st.interpolationValues.add(InterpolationValue("Многочлен Гаусса 2", sum2.prettyRound(k=4)))
+        println("\n")
     }
 }
 

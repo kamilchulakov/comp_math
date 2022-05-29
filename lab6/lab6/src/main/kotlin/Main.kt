@@ -1,8 +1,11 @@
 import LabConfiguration.funcList
+import jetbrains.datalore.plot.config.asMutable
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.TreeMap
 import kotlin.math.abs
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 
@@ -48,8 +51,8 @@ fun <T> repeatTryAndCatch(func: ()->T, isInvalid: (T?)->Boolean = {it->it == nul
     return res ?: throw IllegalStateException("Null число!")
 }
 
-fun rungeKutt(func: (Double, Double) -> Double, x0: Double, y0: Double,
-              b: Double, h: Double, p: Int): TreeMap<Double, Double> {
+fun rungeKutta(func: (Double, Double) -> Double, x0: Double, y0: Double,
+               b: Double, h: Double, p: Int): TreeMap<Double, Double> {
     var prevX = x0
     var prevY = y0
     val lst = TreeMap<Double, Double>()
@@ -69,21 +72,91 @@ fun rungeKutt(func: (Double, Double) -> Double, x0: Double, y0: Double,
     return lst
 }
 
-fun rungeKuttWithRungeCheck(func: (Double, Double) -> Double, x0: Double, y0: Double,
-                            b: Double, h: Double, eps: Double): TreeMap<Double, Double> {
+fun rungeKuttaWithRungeCheck(func: (Double, Double) -> Double, x0: Double, y0: Double,
+                            b: Double, h: Double, eps: Double): List<Pair<Double, Double>> {
     var R = 2 * eps
     var currH = h
     var prevRes: TreeMap<Double, Double>? = null
-    var p = 4
+    var p = 3
     while (R > eps) {
         // try to find better result
-        val res = rungeKutt(func, x0, y0, b, currH, p)
-        if (prevRes != null) R = abs(prevRes[prevRes.floorKey(b)]!! - res[res.floorKey(b)]!!) / (2.0.pow(p) - 1)
+        val res = rungeKutta(func, x0, y0, b, currH, p)
+        if (prevRes != null) R = abs(prevRes[prevRes.lastKey()]!! - res[res.lastKey()]!!) / (2.0.pow(p) - 1)
         if (R > eps) prevRes = res
         currH /= 2.0
         p++
     }
-    return prevRes ?: throw IllegalStateException("Рунге-Кутт вернул null.")
+    val res = prevRes ?: throw IllegalStateException("Метод Рунге-Кутта вернул null.")
+    val n = ((b-x0)/h).toInt()
+    var currX = x0
+    val realRes = mutableListOf<Pair<Double, Double>>()
+    for (i in 0..n) {
+        if (res.ceilingKey(currX) != null) realRes.add(Pair(currX.prettyRound(),res[res.ceilingKey(currX)]!!))
+        currX += h
+        currX = currX.prettyRound()
+    }
+    return realRes
+}
+
+fun miln(func: (Double, Double) -> Double, x0: Double, y0: Double,
+         b: Double, h: Double, eps: Double, p: Int): List<Pair<Double, Double>> {
+    val lst = rungeKuttaWithRungeCheck(func, x0, y0, b, h, eps).take(4).asMutable()
+    var prevX = (x0+3*h).prettyRound(p)
+    var idx = 4
+    val n = ((b-x0) / h).toInt()
+    while (idx <= n) {
+        val f3i = func(lst[idx-3].first, lst[idx-3].second)
+        val f2i = func(lst[idx-2].first, lst[idx-2].second)
+        val f1i = func(lst[idx-1].first, lst[idx-1].second)
+        val y = lst[idx-4].second+4*h/3.0 * (2*f3i-f2i+2*f1i)
+        prevX += h.prettyRound(p)
+        lst.add(Pair(prevX.prettyRound(p), y))
+        idx++
+    }
+    return lst
+}
+
+fun milnWithRungeCheck(func: (Double, Double) -> Double, x0: Double, y0: Double,
+                            b: Double, h: Double, eps: Double): List<Pair<Double, Double>> {
+    var R = 2 * eps
+    var currH = h
+    var prevRes: List<Pair<Double, Double>>? = null
+    var p = 3
+    // прогноз
+    while (R > eps) {
+        // try to find better result
+        val prevR = R
+        val res = miln(func, x0, y0, b, currH, eps, p)
+        if (prevRes != null) R = abs(prevRes.last().second - res.last().second) / (2.0.pow(p) - 1)
+        if (prevRes != null && R == prevR) break
+        if (R > eps) prevRes = res
+        if (res.size > 100) break
+        currH /= 2.0
+        p++
+    }
+    // (map)reduce
+    val original = mutableListOf<Pair<Double, Double>>()
+    val reduced = mutableListOf<Pair<Double, Double>>()
+    var srch = x0.prettyRound(p)
+    if (prevRes != null) {
+        for (pair: Pair<Double, Double> in prevRes) {
+            if (pair.first.prettyRound(p) - srch < eps) {
+                reduced.add(pair)
+                original.add(pair)
+                srch += h.prettyRound(p)
+            }
+        }
+    } else throw IllegalStateException("Метод Милна вернул null.")
+
+    // коррекция
+    val n = reduced.size
+    for (i in 2 until n) {
+        val f2i = func(reduced[i-2].first, reduced[i-2].second)
+        val f1i = func(reduced[i-1].first, reduced[i-1].second)
+        val f0pr = func(reduced[i].first, reduced[i].second)
+        reduced[i] = Pair(reduced[i].first, (reduced[i-2].second+h/3.0 * (f2i+4*f1i+f0pr)).prettyRound(p))
+    }
+    return reduced
 }
 
 /**
@@ -96,12 +169,27 @@ fun main() = runBlocking {
     println("Выбранная функция: ${func.str}")
     val x = repeatTryAndCatch( {askDouble("Введите x0")}, numberFormatMsg = "Введите число!")
     val y = repeatTryAndCatch( {askDouble("Введите y(x0)")}, numberFormatMsg = "Введите число!")
-    val b = repeatTryAndCatch( {askDouble("Введите правую границу интервала")}, numberFormatMsg = "Введите число!")
+    val b = repeatTryAndCatch( {askDouble("Введите xn")}, numberFormatMsg = "Введите число!")
     val h = repeatTryAndCatch( {askDouble("Введите h > 0")}, isInvalid = {it == null || it <=0},
         numberFormatMsg = "Введите число!")
     val eps = repeatTryAndCatch( {askDouble("Введите e > 0")}, isInvalid = {it == null || it <=0},
         numberFormatMsg = "Введите число!")
-    rungeKuttWithRungeCheck(func.lmd, x, y, b, h, eps).forEach {
-        println("${it.key} ${it.value}")
+    launch {
+        println("\nМетод Милна")
+        println("i\tx\ty")
+        val res = milnWithRungeCheck(func.lmd, x, y, b, h, eps)
+        res.forEachIndexed {
+            idx, it -> println("$idx ${it.first.prettyRound(2)} ${it.second}")
+        }
+    }
+    println("\nМетод Рунге-Кутта 4-го порядка")
+    println("i\tx\ty")
+    val res = rungeKuttaWithRungeCheck(func.lmd, x, y, b, h, eps)
+    val n = ((b-x)/h).toInt()
+    var currX = x - 0.0001
+    for (i in 0..n) {
+        println("$i\t${currX.prettyRound(2)}\t${res[i].second}")
+        currX += h
+        currX = currX.prettyRound()
     }
 }

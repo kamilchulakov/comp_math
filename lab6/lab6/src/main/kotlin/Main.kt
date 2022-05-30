@@ -1,4 +1,5 @@
 import LabConfiguration.funcList
+import UIManager.draw
 import jetbrains.datalore.plot.config.asMutable
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
@@ -174,14 +175,7 @@ fun main() = runBlocking {
         numberFormatMsg = "Введите число!")
     val eps = repeatTryAndCatch( {askDouble("Введите e > 0")}, isInvalid = {it == null || it <=0},
         numberFormatMsg = "Введите число!")
-    launch {
-        println("\nМетод Милна")
-        println("i\tx\ty")
-        val res = milnWithRungeCheck(func.lmd, x, y, b, h, eps)
-        res.forEachIndexed {
-            idx, it -> println("$idx ${it.first.prettyRound(2)} ${it.second}")
-        }
-    }
+
     println("\nМетод Рунге-Кутта 4-го порядка")
     println("i\tx\ty")
     val res = rungeKuttaWithRungeCheck(func.lmd, x, y, b, h, eps)
@@ -192,4 +186,14 @@ fun main() = runBlocking {
         currX += h
         currX = currX.prettyRound()
     }
+
+    println("\nМетод Милна")
+    println("i\tx\ty")
+    val res2 = milnWithRungeCheck(func.lmd, x, y, b, h, eps)
+    res2.forEachIndexed {
+            idx, it -> println("$idx\t${it.first.prettyRound()}\t${it.second}")
+    }
+
+    draw(res, res2, x, b, h)
+
 }

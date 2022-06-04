@@ -1,3 +1,4 @@
+import LabConfiguration.solvedList
 import javafx.application.Platform
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.values.Color
@@ -9,30 +10,52 @@ import jetbrains.letsPlot.intern.toSpec
 import jetbrains.letsPlot.letsPlot
 import java.awt.Dimension
 import java.awt.GridLayout
+import java.util.*
 import javax.swing.*
 import javax.swing.JFrame.EXIT_ON_CLOSE
+import kotlin.collections.HashMap
 
 object UIManager {
     private const val n = 2000
     private const val eps = 10.0 / n
 
-    fun draw(rungeRes: List<Pair<Double, Double>>, milnRes: List<Pair<Double, Double>>, a: Double, b: Double, h: Double) {
+    fun draw(rungeRes: List<Pair<Double, Double>>, milnRes: List<Pair<Double, Double>>,
+             a: Double, b: Double, h: Double, func: Func) {
         val plots = HashMap<String, Plot>()
         val n = ((b-a)/h).toInt()+1
+        val n2 = ((b-a)/h).toInt()*100
+        val xm = generateArray(n2, h / 100, a)
+        val xg = xm.map { it!! }
+        val xlist: List<Double> = xg.toList()
+        val corr = solvedList.first { it.str == func.str }.lmd
         val wanted = mapOf<String, List<*>>(
+            "xvar" to List(n) { j:Int-> rungeRes[j].first } + xlist,
+            "yvar" to List(n) { j:Int->
+                rungeRes[j].second
+            } + List(n2) { j:Int-> corr(xlist[j], 0.0) }
+        )
+        val wanted2 = mapOf<String, List<*>>(
+            "xvar" to List(n) { j:Int-> milnRes[j].first } + xlist,
+            "yvar" to List(n) { j:Int->
+                milnRes[j].second
+            } + List(n2) { j:Int-> corr(xlist[j], 0.0) }
+        )
+        val wall = mapOf<String, List<*>>(
             "xvar" to List(n) { j:Int-> rungeRes[j].first },
             "yvar" to List(n) { j:Int->
                 rungeRes[j].second
             }
         )
-        val wanted2 = mapOf<String, List<*>>(
+        val wall2 = mapOf<String, List<*>>(
             "xvar" to List(n) { j:Int-> milnRes[j].first },
             "yvar" to List(n) { j:Int->
                 milnRes[j].second
             }
         )
-        plots["Метод Рунге-Кутта"] = letsPlot(wanted) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1, color = Color.RED, size = 5)
-        plots["Метод Милна"] = letsPlot(wanted2) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1, color = Color.DARK_GREEN, size = 5)
+        plots["Метод Рунге-Кутта"] = letsPlot(wanted) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1, color = Color.RED, size = 1)
+        plots["Точки Рунге-Кутта"] = letsPlot(wall) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1, color = Color.RED, size = 2)
+        plots["Метод Милна"] = letsPlot(wanted2) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1, color = Color.DARK_GREEN, size = 1)
+        plots["Точки Милна"] = letsPlot(wall2) { x = "xvar"; y = "yvar" } + geomPoint(shape = 1, color = Color.DARK_GREEN, size = 2)
 
 
         val selectedPlotKey = plots.keys.first()

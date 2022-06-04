@@ -134,10 +134,6 @@ fun ripMiln(realA: Double, y0: Double, realB: Double, suggestedH: Double, eps: D
     var x: Array<Double?>
     val goodX = generateArray(n + 1, h, realA)
     var y: MutableList<Double>
-    var a: Double
-    var b: Double
-    var c: Double
-    var d: Double
     var y1: Double
     var y2: Double
     var e: Double
@@ -145,28 +141,16 @@ fun ripMiln(realA: Double, y0: Double, realB: Double, suggestedH: Double, eps: D
     while (true) {
         x = generateArray(n + 1, h, realA)
         y = rungeKuttaWithRungeCheck(f,realA,y0, realB, h, eps).res.map { it.second }.asMutable()
-//        y[0] = y0
-//        for (k in 0..3) {
-//            if (k >= x.size - 1) break
-//            a = h * f(x[k]!!, y[k]!!)
-//            b = h * f(x[k]!! + h / 2, y[k]!! + a / 2)
-//            c = h * f(x[k]!! + h / 2, y[k]!! + b / 2)
-//            d = h * f(x[k]!! + h, y[k]!! + c)
-//            y[k + 1] = (y[k]!! + (a + 2 * b + 2 * c + d) / 6).prettyRound(p)
-//        }
         var k = 4
         while (k <= n + 1) {
             // прогноз
-            y1 = y[k - 4]!! + 4 * h / 3 * (2 * f(x[k - 3]!!, y[k - 3]!!) - f(x[k - 2]!!, y[k - 2]!!) + 2 * f(x[k - 1]!!, y[k - 1]!!))
+            y1 = y[k - 4] + 4 * h / 3 * (2 * f(x[k - 3]!!, y[k - 3]) - f(x[k - 2], y[k - 2]) + 2 * f(x[k - 1]!!, y[k - 1]))
             // корректор
-            y2 = y[k - 2]!! + h / 3 * (f(x[k - 2]!!, y[k - 2]!!) + 4 * f(x[k - 1]!!, y[k - 1]!!) + f(x[k]!!, y1))
+            y2 = y[k - 2] + h / 3 * (f(x[k - 2]!!, y[k - 2]) + 4 * f(x[k - 1]!!, y[k - 1]) + f(x[k]!!, y1))
             e = Math.abs(y2 - y1)
             if (e < eps) {
                 y[k] = y1
             } else {
-//                h /= 2
-//                n *= 2
-//                break
                 y[k] = y2
                 k--;
             }
@@ -181,91 +165,6 @@ fun ripMiln(realA: Double, y0: Double, realB: Double, suggestedH: Double, eps: D
         }
         p++
     }
-}
-
-fun milnChill(func: (Double, Double) -> Double, x0: Double, y0: Double,
-              b: Double, h: Double, eps: Double): List<Pair<Double, Double>> {
-    var p = 3
-    var currH = h
-    var lst = rungeKuttaWithRungeCheck(func, x0, y0, b, h, eps).res.take(4).asMutable()
-    var prevX = (x0+4*h).prettyRound(p)
-    var idx = 4
-    while (prevX <= b) {
-        val f3i = func(lst[idx-3].first, lst[idx-3].second)
-        val f2i = func(lst[idx-2].first, lst[idx-2].second)
-        val f1i = func(lst[idx-1].first, lst[idx-1].second)
-        val ypred = lst[idx-4].second+(4.0*h/3.0) * (2.0*f3i-f2i+2.0*f1i)
-        val f22i = func(lst[idx-2].first, lst[idx-2].second)
-        val f12i = func(lst[idx-1].first, lst[idx-1].second)
-        val f0pr = func(prevX, ypred)
-        val ycorr = (lst[idx-2].second+(h/3.0)*( f22i+4*f12i+f0pr)).prettyRound(p)
-//        val y1 = lst[idx-4].second + (4*h) / 3*( 2*func(lst[idx-3].first,lst[idx-3].second )-func( lst[idx-2].first,lst[idx-2].second )
-//                +2*func(lst[idx-1].first,lst[idx-1].second ));
-//        val y2 = lst[idx-2].second + (h/3)*(func( lst[idx-2].first,lst[idx-2].second  )+4*func(lst[idx-1].first,lst[idx-1].second )+ func(prevX, y1 ));
-//        println("$y1 $y2 $ypred $ycorr")
-        val pg = abs (ycorr-ypred) / 29;
-        if (pg > eps) {
-            lst.add(Pair(prevX, ycorr.prettyRound(p)))
-        } else {
-            lst.add(Pair(prevX, ypred.prettyRound(p)))
-        }
-        prevX += h.prettyRound(p)
-        idx++
-    }
-    return lst
-}
-
-
-fun milnFull(func: (Double, Double) -> Double, x0: Double, y0: Double,
-             b: Double, h: Double, eps: Double): List<Pair<Double, Double>> {
-//    return rungeKuttaWithRungeCheck(func, x0, y0, b, h, eps)
-    var R = 2 * eps
-    var currH = h
-    var prevRes: List<Pair<Double, Double>>? = null
-    var p = 3
-    // прогноз
-    while (R > eps) {
-        // try to find better result
-        val prevR = R
-        val res = miln(func, x0, y0, b, currH, eps, p)
-        if (prevRes != null) R = abs(prevRes.last().second - res.last().second) / (2.0.pow(p) - 1)
-        if (prevRes != null && R == prevR) break
-        if (prevRes != null) {
-            if (R.isNaN() || prevRes.last().second.isNaN() || prevRes.last().second.isInfinite()) R = Double.MAX_VALUE
-        }
-        R = 2*eps
-        if (R > eps) prevRes = res
-        currH /= 2.0
-        p++
-        if (currH < 0.01) {
-            prevRes = rungeKuttaWithRungeCheck(func, x0, y0, b, h, eps).res
-            break
-        }
-
-    }
-    // (map)reduce
-    val original = mutableListOf<Pair<Double, Double>>()
-    val reduced = mutableListOf<Pair<Double, Double>>()
-    var srch = x0.prettyRound(p)
-    if (prevRes != null) {
-        for (pair: Pair<Double, Double> in prevRes) {
-            if (pair.first.prettyRound(p) - srch < eps) {
-                reduced.add(pair)
-                original.add(pair)
-                srch += h.prettyRound(p)
-            }
-        }
-    } else throw IllegalStateException("Метод Милна вернул null.")
-
-    // коррекция
-    val n = reduced.size
-    for (i in 2 until n) {
-        val f2i = func(reduced[i-2].first, reduced[i-2].second)
-        val f1i = func(reduced[i-1].first, reduced[i-1].second)
-        val f0pr = func(reduced[i].first, reduced[i].second)
-        reduced[i] = Pair(reduced[i].first, (reduced[i-2].second+h/3.0 * (f2i+4*f1i+f0pr)).prettyRound(p))
-    }
-    return reduced
 }
 
 /**

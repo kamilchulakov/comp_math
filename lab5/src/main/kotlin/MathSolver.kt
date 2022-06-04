@@ -1,3 +1,5 @@
+import MathSolver.tMult1
+
 object MathSolver {
     fun lagrangeInterpolation(st: ProgramState) {
         val resPoints = mutableListOf<Double>()
@@ -25,6 +27,35 @@ object MathSolver {
         }
 
         st.interpolationValues.add(InterpolationValue("Многочлен Лагранжа", resPoints.sum().prettyRound()))
+    }
+
+    fun lagrangeInterpolationGraph(st: ProgramState, m: Double): Double {
+        st.interpolationParam = m
+        val resPoints = mutableListOf<Double>()
+        val n = st.x.size
+        var result = 1.0
+        for (j in 0 until n) {
+            val c0 = st.interpolationParam - st.x[j]
+            result *= c0
+        }
+        for (i in 0 until n) {
+            var curr = result
+            for (j in 0 until n) {
+                curr /= if (i == j) {
+                    val c0 = st.interpolationParam - st.x[j]
+                    c0
+                } else {
+                    val c1 = st.x[i] - st.x[j]
+                    c1
+                }
+            }
+            resPoints.add(curr)
+        }
+        for (i in 0 until n) {
+            resPoints[i] *= st.y[i]
+        }
+
+        return resPoints.sum().prettyRound()
     }
 
     fun tMult1(curr: Double, t: Double, i: Int): Double {
@@ -112,6 +143,44 @@ object MathSolver {
         st.interpolationValues.add(InterpolationValue("Многочлен Гаусса 2", sum2.prettyRound(k=4)))
         println("\n")
     }
+}
+
+fun gaussInterpolationGraph(st: ProgramState, m: Double): Double {
+    st.interpolationParam = m
+    val otherY = mutableListOf<MutableList<Double>>()
+    for (i in 0 until st.n) {
+        otherY.add(mutableListOf())
+        for (j in 0 until st.n - i) {
+            otherY[i].add(0.0)
+        }
+    }
+    for (i in 0 until st.n) {
+        otherY[i][0]=st.y[i]
+    }
+
+    for (i in 1 until st.n) {
+        for (j in 0 until st.n - i) {
+            otherY[j][i]=
+                (otherY[j + 1][i - 1] - otherY[j][i - 1]).prettyRound()
+        }
+    }
+
+//    println("\nТаблица для многочлена Гаусса:")
+//    for (i in 0 until st.n) {
+//        println(otherY[i].joinToString(separator = " "))
+//    }
+
+    var sum1 = otherY[(st.n/2)][0]
+    val t = (st.interpolationParam - st.x[(st.n/2)]) / (st.x[1] - st.x[0])
+    var t1 = 1.0
+    var fact = 1
+
+    for (i in 1 until st.n) {
+        fact *= i
+        t1 = tMult1(t1, t, i)
+        sum1 += (t1 * otherY[((st.n - i) / 2)][i]) / fact
+    }
+    return sum1
 }
 
 data class ResultFunc(val type: String, val funcString: String, val func: (Double) -> Double)
